@@ -9,7 +9,6 @@ from audioldm.hifigan.utilities import get_vocoder, vocoder_infer
 class AutoencoderKL(nn.Module):
     def __init__(
         self,
-        ddconfig=None,
         lossconfig=None,
         image_key="fbank",
         embed_dim=None,
@@ -25,8 +24,6 @@ class AutoencoderKL(nn.Module):
         super().__init__()
 
         self.encoder = Encoder(**ddconfig)
-        self.decoder = Decoder(**ddconfig)
-
         self.subband = int(subband)
 
         if self.subband > 1:
@@ -57,7 +54,6 @@ class AutoencoderKL(nn.Module):
     def decode(self, z):
         z = self.post_quant_conv(z)
         dec = self.decoder(z)
-        dec = self.freq_merge_subband(dec)
         return dec
 
     def decode_to_waveform(self, dec):
